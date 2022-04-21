@@ -1,0 +1,29 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+CREATE TABLE modules (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+CREATE TABLE groups (
+    id UUID PRIMARY KEY,
+    invite_link TEXT UNIQUE,
+    module_id TEXT NOT NULL REFERENCES modules(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+CREATE TABLE memberships (
+    user_id INTEGER REFERENCES users(id) ON UPDATE RESTRICT ON DELETE CASCADE,
+    group_id UUID REFERENCES groups(id) ON UPDATE RESTRICT ON DELETE CASCADE,
+    CONSTRAINT participations_pk PRIMARY KEY (user_id, group_id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
